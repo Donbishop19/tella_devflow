@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local"
 import "./globals.css";
+import ThemeProvider from "@/context/Theme";
+import { Geist } from "next/font/google";
+import { cn } from "@/lib/utils";
+import Navbar from "@/components/navigation/navbar";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const inter = localFont({
   src: "./fonts/InterVF.ttf",
@@ -30,8 +36,14 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning className={cn("font-sans", geist.variable)}
     >
-      <body className={`${inter.className} ${spaceGrotesk.variable}   antialiased`}>{children}</body>
+      <body className={`${inter.className} ${spaceGrotesk.variable}   antialiased`}>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <Navbar />
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
