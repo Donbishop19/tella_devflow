@@ -16,8 +16,7 @@ const SocialAuthForm = () => {
         // redirect: false,
       })
     } catch (error) {
-      console.log(error);
-
+      console.error(error);
       // show sonner
       toast.error("Sign-in Failed", {
         description:

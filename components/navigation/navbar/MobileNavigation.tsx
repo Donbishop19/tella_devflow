@@ -29,7 +29,7 @@ const MobileNavigation = () => {
           <SheetTitle className="hidden">Navigation</SheetTitle>
           <Link href="/" className="flex items-center gap-1">
             <Image
-              src="/images/site-log.svg"
+              src="/images/site-logo.svg"
               width={23}
               height={23}
               alt="Logo"

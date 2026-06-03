@@ -81,19 +81,19 @@ const AuthForm = <T extends FieldValues>({
         ))}
 
         <Button
+          type="submit"
           disabled={form.formState.isSubmitting}
           className="primary-gradient paragraph-medium min-h-12 w-full rounded-2 px-4 py-3 font-inter text-light-900!"
         >
           {form.formState.isSubmitting
             ? buttonText === "Sign In"
-              ? "Signin In..."
+              ? "Signing In..."
               : "Signing Up..."
             : buttonText}
         </Button>
 
-        {formType === "SIGN_IN" ? (
           <p>
-            Don&t have an account?{" "}
+            Don&apos;t have an account?            
             <Link
               href={ROUTES.SIGN_UP}
               className="paragraph-semibold primary-text-gradient"
