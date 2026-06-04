@@ -1,6 +1,6 @@
 import Navbar from '@/components/navigation/navbar';
 import React from 'react'
-import LeftSidebar from '../../components/navigation/LeftSidebar';
+import LeftSidebar from '@/components/navigation/LeftSidebar';
 
 const Rootlayout = ({
   children,
