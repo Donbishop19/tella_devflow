@@ -1,4 +1,4 @@
-﻿import { clsx, type ClassValue } from "clsx";
+import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { techMap } from "@/constants/techMap";
 
@@ -7,6 +7,10 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export const getDeviconClassName = (techName: string) => {
+  if (!techName || techName.trim() === "") {
+    return "devicon-devicon-plain";
+  }
+
   const normalizedTechName = techName
     .replace(/[ .]/g, "")
     .toLowerCase();
@@ -15,3 +19,4 @@ export const getDeviconClassName = (techName: string) => {
     ? `${techMap[normalizedTechName]} colored`
     : "devicon-devicon-plain";
 };
+
