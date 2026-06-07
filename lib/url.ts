@@ -15,11 +15,17 @@ export const formUrlQuery = ({ params, key, value }: UrlQueryParams) => {
 
   queryString[key] = value;
 
+  if(value) {
+    queryString[key] = value;
+  } else {
+    delete queryString[key];
+  }
+
   return qs.stringifyUrl({
     url: window.location.pathname,
     query: queryString,
-  })
-}
+  });
+};
 
 export const removeKeysFromQuery = ({ params,keysToRemove }: RemoveQueryParams) => {
   const queryString = qs.parse(params);

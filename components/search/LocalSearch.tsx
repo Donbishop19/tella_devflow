@@ -21,7 +21,11 @@ const LocalSearch = ({ route, imgSrc, placeholder, otherClasses }: Props) => {
   const searchParams = useSearchParams();
   const query = searchParams.get("query") || "";
 
-  const [searchQuery, setSearchQuery] = useState(query);
+  const [searchQuery, setSearchQuery] = useState(query); 
+  // Sync local state when URL query parameter changes
+  useEffect(() => {
+    setSearchQuery(query);
+  }, [query]);
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
@@ -33,15 +37,13 @@ const LocalSearch = ({ route, imgSrc, placeholder, otherClasses }: Props) => {
         });
 
         router.push(newUrl, { scroll: false });
-      } else {
-        if (pathname === route) {
-          const newUrl = removeKeysFromQuery({
-            params: searchParams.toString(),
-            keysToRemove: ["query"],
-          });
+      } else {  
+        const newUrl = removeKeysFromQuery({
+          params: searchParams.toString(),
+          keysToRemove: ["query"],
+        });
 
           router.push(newUrl, { scroll: false });
-        }
       }
     }, 300);
 
