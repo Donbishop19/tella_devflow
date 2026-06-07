@@ -48,7 +48,7 @@ const Home = async ({ searchParams }: SearchParams) => {
       .toLowerCase()
       .includes(query.toLowerCase());
     const matchesFilter = filter
-      ? question.tags[0].name.toLowerCase() === filter.toLowerCase()
+      ? question.tags[0]?.name?.toLowerCase() === filter.toLowerCase()
       : true;
     return matchesQuery && matchesFilter;
   });

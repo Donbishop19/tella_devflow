@@ -23,6 +23,9 @@ const HomeFilter = () => {
   const searchParams = useSearchParams();
   const filterParams = searchParams.get("filter");
   const [active, setActive] = useState(filterParams || "");
+  React.useEffect(() => {
+    setActive(filterParams || "");
+  } [filterParams]);
 
   const handleTypeClick = (filter: string) => {
     let newUrl = "";
