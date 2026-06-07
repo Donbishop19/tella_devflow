@@ -20,19 +20,20 @@ const LocalSearch = ({ route, imgSrc, placeholder, otherClasses }: Props) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const query = searchParams.get("query") || "";
-  const [search, setSearch] = useState(query || "");
-  const previousSearchRef = useRef(search);
+
 
   const [searchQuery, setSearchQuery] = useState(query); 
+  const previousSearchRef = useRef(searchQuery);
+  
    // Sync local state when URL query parameter changes
   useEffect(() => {
     setSearchQuery(query);
   }, [query]);
 
   useEffect(() => {
-    if(previousSearchRef.current === search ) return;
+    if(previousSearchRef.current === searchQuery ) return;
 
-    previousSearchRef.current = search;
+    previousSearchRef.current = searchQuery;
 
     const delayDebounceFn = setTimeout(() => {
       if (searchQuery) {
@@ -54,8 +55,7 @@ const LocalSearch = ({ route, imgSrc, placeholder, otherClasses }: Props) => {
     }, 300);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [searchQuery, search, router, route, searchParams, pathname]);
-
+  }, [searchQuery, router, route, searchParams, pathname]);
   return (
     <div
       className={`background-light800_darkgradient flex min-h-14 grow items-center gap-4 rounded-[10px] px-4 ${otherClasses}`}

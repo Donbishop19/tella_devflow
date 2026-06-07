@@ -25,6 +25,10 @@ export const getTimeStamp = (date: Date): string => {
   const now = new Date();
   const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
+  if (diffInSeconds < 0) {
+    return "just now"
+  }
+
   if (diffInSeconds < 60) {
     return `${diffInSeconds} second${diffInSeconds !== 1 ? "s" : ""} ago`;
   }
