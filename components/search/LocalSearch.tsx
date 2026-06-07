@@ -22,10 +22,10 @@ const LocalSearch = ({ route, imgSrc, placeholder, otherClasses }: Props) => {
   const query = searchParams.get("query") || "";
 
   const [searchQuery, setSearchQuery] = useState(query); 
-  // Sync local state when URL query parameter changes
-  useEffect(() => {
-    setSearchQuery(query);
-  }, [query]);
+   // Sync local state when URL query parameter changes
+  // useEffect(() => {
+  //   setSearchQuery(query);
+  // }, [query]);
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
