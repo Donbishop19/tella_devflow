@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { formUrlQuery, removeKeysFromQuery } from "@/lib/url";
 
@@ -20,6 +20,8 @@ const LocalSearch = ({ route, imgSrc, placeholder, otherClasses }: Props) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const query = searchParams.get("query") || "";
+  const [search, setSearch] = useState(query || "");
+  const previousSearchRef = useRef(search);
 
   const [searchQuery, setSearchQuery] = useState(query); 
    // Sync local state when URL query parameter changes
@@ -28,6 +30,10 @@ const LocalSearch = ({ route, imgSrc, placeholder, otherClasses }: Props) => {
   }, [query]);
 
   useEffect(() => {
+    if(previousSearchRef.current === search ) return;
+
+    previousSearchRef.current = search;
+
     const delayDebounceFn = setTimeout(() => {
       if (searchQuery) {
         const newUrl = formUrlQuery({
@@ -48,7 +54,7 @@ const LocalSearch = ({ route, imgSrc, placeholder, otherClasses }: Props) => {
     }, 300);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [searchQuery, router, route, searchParams, pathname]);
+  }, [searchQuery, search, router, route, searchParams, pathname]);
 
   return (
     <div
