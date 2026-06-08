@@ -95,7 +95,7 @@ const QuestionForm = () => {
               </div>
             </FormControl>
             <FormDescription className='body-regular text-light-500 mt-2.5'>
-              Add up to 3 tags to describle what your question is about. you need to press enter to add a tag. 
+              Add up to 3 tags to describe what your question is about. You need to press enter to add a tag. 
             </FormDescription>
             <FormMessage />
           </FormItem>
@@ -103,7 +103,7 @@ const QuestionForm = () => {
       />
 
       <div className="mt-16 flex justify-end">
-        <Button type='submit' className='primary-gradient text-light-900!'>
+        <Button type='submit' className='primary-gradient !text-light-900'>
           Ask A Question
         </Button>
       </div>
