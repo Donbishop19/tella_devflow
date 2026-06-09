@@ -42,12 +42,16 @@ const QuestionForm = () => {
     e: React.KeyboardEvent<HTMLInputElement>,
     field: { value: string[] }
   ) => {
-    console.log(field, e);
     if (e.key === "Enter") {
       e.preventDefault();
       const tagInput = e.currentTarget.value.trim();
 
-      if (tagInput && tagInput.length < 15 && !field.value.includes(tagInput)) {
+      if (field.value.length >= 3) {
+        form.setError("tags", {
+           type: "manual",
+           message: "You can add up to 3 tags only",
+        });
+      } else if (tagInput && tagInput.length < 15 && !field.value.includes(tagInput)) {
         form.setValue("tags", [...field.value, tagInput]);
         e.currentTarget.value = "";
         form.clearErrors("tags");

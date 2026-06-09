@@ -71,6 +71,12 @@ const TagCard = ({
       </Link>
     );
   }
+
+  return (
+    <Link href={ROUTES.TAGS(_id)} className="flex justify-between gap-2">
+      {Content}
+    </Link>
+  );
 };
 
 export default TagCard;
