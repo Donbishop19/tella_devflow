@@ -20,18 +20,22 @@ interface Question {
   createdAt: Date;
 }
 
-type ActionResponse<T = null> = {
-  success: boolean;
-  data?: T;
-  error?: {
+type SuccessResponse<T = null> = {
+  success: true;
+  data: T;
+  status?: number;
+};
+
+type ErrorResponse = {
+  success: false;
+  error: {
     message: string;
     details?: Record<string, string[]>;
   };
   status?: number;
 };
 
-type SuccessResponse<T = null> = ActionResponse<T> & { success: true };
-type ErrorResponse = ActionResponse<undefined> & { success: false };
+type ActionResponse<T = null> = SuccessResponse<T> | ErrorResponse;
 
 type APIErrorResponse = NextResponse<ErrorResponse>;
 type APIResponse<T = null> = NextResponse<SuccessResponse<T> | ErrorResponse>;
