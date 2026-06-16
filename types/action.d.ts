@@ -3,8 +3,8 @@ interface SignInWithOAuthParams {
   providerAccountId: string;
   user: {
     email: string;
-    name: string;
-    image: string;
+    name: string | null;
+    image: string | null;
     username: string;
   };
 }

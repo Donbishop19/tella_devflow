@@ -27,7 +27,13 @@ export async function POST(request: Request) {
     if (!validatedData.success)
       throw new ValidationError(validatedData.error.flatten().fieldErrors);
 
-    const { name, username, email, image } = user;
+    const {
+      provider: validatedProvider,
+      providerAccountId: validatedProviderAccountId,
+      user: validatedUser,
+    } = validatedData.data;
+
+    const { name, username, email, image } = validatedUser;
 
     const slugifiedUsername = slugify(username, {
       lower: true,
@@ -58,8 +64,8 @@ export async function POST(request: Request) {
 
     const existingAccount = await Account.findOne({
       userId: existingUser._id,
-      provider,
-      providerAccountId,
+      provider: validatedProvider,
+      providerAccountId: validatedProviderAccountId,
     }).session(session);
 
     if (!existingAccount) {
@@ -69,8 +75,8 @@ export async function POST(request: Request) {
             userId: existingUser._id,
             name,
             image,
-            provider,
-            providerAccountId,
+            provider: validatedProvider,
+            providerAccountId: validatedProviderAccountId,
           },
         ],
         { session }
@@ -81,7 +87,9 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true });
   } catch (error: unknown) {
-    await session.abortTransaction();
+    if(session.inTransaction()) {
+      await session.abortTransaction();
+    }
     return handleError(error, "api") as APIErrorResponse;
   } finally {
     session.endSession();
