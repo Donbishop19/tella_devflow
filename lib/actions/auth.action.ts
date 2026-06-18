@@ -9,7 +9,6 @@ import User from "@/database/user.model";
 
 import action from "../handlers/action";
 import handleError from "../handlers/error";
-import { NotFoundError } from "../http-errors";
 import { SignInSchema, SignUpSchema } from "../validations";
 
 export async function signUpWithCredentials(
@@ -86,15 +85,14 @@ export async function signInWithCredentials(
   try {
     const existingUser = await User.findOne({ email });
 
-    if (!existingUser) throw new NotFoundError("User");
+    if (!existingUser) throw new Error("Invalid credentials");
 
     const existingAccount = await Account.findOne({
       provider: "credentials",
       providerAccountId: email,
     });
 
-    if (!existingAccount) throw new NotFoundError("Account");
-
+    if (!existingAccount) throw new Error("Invalid credentials");
     const passwordMatch = await bcrypt.compare(
       password,
       existingAccount.password
