@@ -3,14 +3,15 @@
 import  mongoose  from "mongoose";
 import action from "../handlers/action";
 import handleError from "../handlers/error";
-import { SignInSchema } from "../validations";
+import { SignUpSchema } from "../validations";
 import User from "@/database/user.model";
 import bcrypt from "bcryptjs";
 import Account from "@/database/account.model";
 import { signIn } from "@/auth";
 
 export async function signUpWithCredentials(params: AuthCredentials): Promise<ActionResponse> {
-  const validationResult = await action({ params, schema: SignInSchema });
+  
+  const validationResult = await action({ params, schema: SignUpSchema });
 
   if(validationResult instanceof Error) {
     return handleError(validationResult) as ErrorResponse;
@@ -44,16 +45,16 @@ export async function signUpWithCredentials(params: AuthCredentials): Promise<Ac
       provider: "credentials",
       providerAccountId: email,
       password: hashedPassword,
-    }]);
+    }], { session });
 
     await session.commitTransaction();
-    
+
     await signIn("credentials", { email,password, redirect: false
      });
      
      return { success: true };
   } catch (error) {
-    session.abortTransaction();
+    await session.abortTransaction();
 
     return handleError(error) as ErrorResponse;
   } finally {

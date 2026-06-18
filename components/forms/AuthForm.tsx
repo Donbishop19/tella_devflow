@@ -39,7 +39,7 @@ const AuthForm = <T extends FieldValues>({
   formType,
   onSubmit,
 }: AuthFormProps<T>) => {
-  
+
   const router = useRouter();
 
   const form = useForm<z.infer<typeof schema>>({
@@ -51,17 +51,14 @@ const AuthForm = <T extends FieldValues>({
     const result = (await onSubmit(data) as ActionResponse);
 
     if(result.success) {
-      toast({
-        title: "Success",
-        description: formType === "SIGN_IN" ? "Signed in successgully" : "Signed up successfully"
+      toast.success("Success", {
+        description: formType === "SIGN_IN" ? "Signed in successfully" : "Signed up successfully"
       })
 
       router.push(ROUTES.HOME)
     } else {
-      toast({
-        title: `${result.status}`,
-        decription: result?.error?.message,
-        variant: "destructive",
+      toast.error(`Error ${result.status}`, {
+        description: result?.error?.message,
       })
     }
 
