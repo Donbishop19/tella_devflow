@@ -14,28 +14,25 @@ interface Question {
   title: string;
   tags: Tag[];
   author: Author;
+  createdAt: Date;
   upvotes: number;
   answers: number;
   views: number;
   createdAt: Date;
 }
 
-type SuccessResponse<T = null> = {
-  success: true;
-  data: T;
-  status?: number;
-};
-
-type ErrorResponse = {
-  success: false;
-  error: {
+type ActionResponse<T = null> = {
+  success: boolean;
+  data?: T;
+  error?: {
     message: string;
     details?: Record<string, string[]>;
   };
   status?: number;
 };
 
-type ActionResponse<T = null> = SuccessResponse<T> | ErrorResponse;
+type SuccessResponse<T = null> = ActionResponse<T> & { success: true };
+type ErrorResponse = ActionResponse<undefined> & { success: false };
 
 type APIErrorResponse = NextResponse<ErrorResponse>;
 type APIResponse<T = null> = NextResponse<SuccessResponse<T> | ErrorResponse>;
