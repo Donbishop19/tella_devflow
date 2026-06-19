@@ -31,9 +31,13 @@ export async function createQuestion(params: createQuestionParams): Promise<Acti
     const tagIds: mongoose.Types.ObjectId[] = [];
     const tagQuestionDocument = [];
 
+    function escapeRegex(str: string): string {
+     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
     for (const tag of tags) {
       const existingTag = await Tag.findOneAndUpdate(
-        { name: { $regex: new RegExp(`^${tag}$`,"i") },}, 
+        {  name: { $regex: new RegExp(`^${escapeRegex(tag)}$`, "i") },}, 
         { $setOnInsert: { name: tag }, $inc: { question: 1 } }, 
         {  upsert: true, new: true, session} 
       );
@@ -47,12 +51,11 @@ export async function createQuestion(params: createQuestionParams): Promise<Acti
 
     await TagQuestion.insertMany(tagQuestionDocument, { session });
 
-    await Question.findById(
+    await Question.findByIdAndUpdate(
       question._id,
       { $push: { tags: { $each: tagIds } } },
       { session }
     );
-
     await session.commitTransaction();
 
     return { success: true,data: JSON.parse(JSON.stringify(question)) }
