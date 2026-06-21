@@ -5,7 +5,7 @@ import { getQuestion } from '@/lib/actions/question.action';
 import { notFound, redirect } from 'next/navigation';
 import React from 'react'
 
-const EsitQuestion = async ({ params }: RouteParams) => {
+const EditQuestion = async ({ params }: RouteParams) => {
   const { id } = await params;
   if (!id) return notFound();
 
@@ -17,8 +17,7 @@ const EsitQuestion = async ({ params }: RouteParams) => {
 
   if(!success) return notFound();
 
-  if(question?.author.toString() !== session?.user?.id) redirect(ROUTES.QUESTION(id));
-
+  if(question?.author?.toString() !== session.user?.id) redirect(ROUTES.QUESTION(id));
   return  (
     <main>
       <QuestionForm question={question} isEdit />
@@ -26,4 +25,4 @@ const EsitQuestion = async ({ params }: RouteParams) => {
   )
 }
 
-export default EsitQuestion
+export default EditQuestion

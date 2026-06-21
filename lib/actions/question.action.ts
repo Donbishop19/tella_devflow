@@ -115,14 +115,16 @@ export async function editQuestion(
       await question.save({ session });
     }
 
+    const existingTagNames = question.tags.map((tag: ITagDoc) => tag.name.toLowerCase());
+    const inputTagNamesLower = tags.map((tag) => tag.toLowerCase());
+
     const tagsToAdd = tags.filter(
-      (tag) => !question.tags.includes(tag.toLowerCase())
+      (tag) => !existingTagNames.includes(tag.toLowerCase())
     );
 
     const tagsToRemove = question.tags.filter(
-      (tag: ITagDoc) => !tags.includes(tag.name.toLowerCase())
+      (tag: ITagDoc) => !inputTagNamesLower.includes(tag.name.toLowerCase())
     );
-
     const newTagDocuments = [];
 
     if (tagsToAdd.length > 0) {
@@ -180,7 +182,9 @@ export async function editQuestion(
     return { success: true, data: JSON.parse(JSON.stringify(question)) };
 
   } catch (error) {
-    await session.abortTransaction;
+     if (session.inTransaction()) {
+      await session.abortTransaction();
+    }
     return handleError(error) as ErrorResponse;
   } finally {
     await session.endSession();
