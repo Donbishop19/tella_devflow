@@ -118,10 +118,9 @@ export async function editQuestion(
     const tagsToAdd = tags.filter(
       (tag) =>
         !question.tags.some((t: ITagDoc) =>
-          t.name.toLowerCase().includes(tag.toLowerCase())
+          t.name.toLowerCase() === tag.toLowerCase()
       )
     );
-
     const tagsToRemove = question.tags.filter(
       (tag: ITagDoc) =>
         !tags.some((t) => t.toLowerCase() === tag.name.toLowerCase())
@@ -166,7 +165,7 @@ export async function editQuestion(
       question.tags = question.tags.filter(
         (tag: mongoose.Types.ObjectId) =>
           !tagIdsToRemove.some((id: mongoose.Types.ObjectId) =>
-            id.equals(tag._id)
+            id.equals(tag)
         )
       );
     }
@@ -240,7 +239,7 @@ export async function getQuestions(params: PaginatedSearchParams): Promise<Actio
   if (query) {
     filterQuery.$or = [
       {title: { $regex: new RegExp(query, "i") }}, 
-      { context: { $regex: new RegExp(query, "i") } },
+      { content: { $regex: new RegExp(query, "i") } },
     ]
   }
 
