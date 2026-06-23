@@ -1,6 +1,6 @@
 "use server";
 
-import  mongoose from "mongoose";
+import  mongoose, { QueryFilter } from "mongoose";
 import action from "../handlers/action";
 import handleError from "../handlers/error";
 import { AskQuestionSchema, EditQuestionSchema, GetQuestionSchema, PaginatedSearchParamsSchema } from "../validations";
@@ -232,7 +232,7 @@ export async function getQuestions(params: PaginatedSearchParams): Promise<Actio
   const skip = (Number(page) - 1 ) * pageSize;
   const limit = Number(pageSize);
 
-  const filterQuery: mongoose.QueryFilter<typeof Question> = {}; 
+  const filterQuery: QueryFilter<typeof Question> = {}; 
 
   if (filter === "recommended") return { success: true, data: { questions: [], isNext: false } };
 
