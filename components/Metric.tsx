@@ -40,7 +40,7 @@ const Metric = ({
         {value}
 
        {title ? <span
-          className={cn( `small-regular line-clamp-1`, textStyles)}
+          className={cn( "small-regular line-clamp-1", textStyles)}
         >
           {title}
         </span> : null}

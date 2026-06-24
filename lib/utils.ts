@@ -97,7 +97,9 @@ export const formatNumber = (number: number) => {
   if (number >= 1000000) {
     return (number / 1000000).toFixed(1) + "M";
   } else if (number >= 1000) {
-    return (number / 1000).toFixed(1) + "K";
+    const inThousands = number / 1000;
+    if (inThousands >= 999.95) return "1.0M";
+    return inThousands.toFixed(1) + "K";
   } else {
     return number.toString();
   }

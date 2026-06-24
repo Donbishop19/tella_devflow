@@ -8,8 +8,7 @@ Code.theme = {
 };
 
 export const Preview = ({ content }: { content: string }) => {
-  const formattedContent = content.replace(/\\/g, "").replace(/&#x20;/g, "");
-
+  const formattedContent = content.replace(/&#x20;/g, " ");
   return (
     <section className="markdown prose grid wrap-break-word">
       <MDXRemote
