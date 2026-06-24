@@ -92,3 +92,13 @@ export const getTimeStamp = (createdAt: Date): string => {
   const diffInYears = Math.floor(diffInMonths / 12);
   return `${diffInYears} year${diffInYears !== 1 ? "s" : ""} ago`;
 };
+
+export const formatNumber = (number: number) => {
+  if (number >= 1000000) {
+    return (number / 1000000).toFixed(1) + "M";
+  } else if (number >= 1000) {
+    return (number / 1000).toFixed(1) + "K";
+  } else {
+    return number.toString();
+  }
+};
