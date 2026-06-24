@@ -7,16 +7,17 @@ import { getQuestion, incrementViews } from "@/lib/actions/question.action";
 import { formatNumber, getTimeStamp } from "@/lib/utils";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { after } from "next/server";
 
 
 const QuestionDetails = async ({ params }: RouteParams) => {
   const { id } = await params;
 
-  const [_, { success, data: question }] = await Promise.all([
-    await incrementViews({ questionId: id }),
-    await getQuestion({  questionId: id }),
-  ])
+  const { success, data: question } = await getQuestion({  questionId: id });
 
+  after(async () => {
+    await incrementViews({ questionId: id });
+  })
 
   if (!success || !question) return redirect("/404")
 
