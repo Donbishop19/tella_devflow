@@ -158,7 +158,7 @@ export const AIAnswerSchema = z.object({
       message: "Question title musn't be longer then 130 characters.",
     }),
   content: z.string().min(100, {
-    message: 'Question description must have Minimum of 100 characters.',
+    message: 'Answer description must have Minimum of 100 characters.',
   }),
   userAnswer: z.string().optional(),
 });
