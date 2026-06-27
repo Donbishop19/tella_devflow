@@ -7,9 +7,10 @@ import { NextResponse } from "next/server";
 
 
 export async function POST(req: Request) {
-  const { question, content } = await req.json();
-
+  
   try {
+    const { question, content } = await req.json();
+    
     const validatedData = AIAnswerSchema.safeParse({ question, content });
 
     if (!validatedData.success) {
