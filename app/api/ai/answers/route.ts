@@ -9,7 +9,7 @@ import { NextResponse } from "next/server";
 export async function POST(req: Request) {
   
   try {
-    const { question, content } = await req.json();
+    const { question, content,userAnswer  } = await req.json();
     
     const validatedData = AIAnswerSchema.safeParse({ question, content });
 
@@ -19,7 +19,16 @@ export async function POST(req: Request) {
 
     const { text } = await generateText({
       model: openai("gpt-4-turbo"),
-      prompt: `Generate a markdown response to the following question: ${question}. based on the provided content: ${content}`,
+        prompt: `Generate a markdown-formatted response to the following question: "${question}".
+
+        Consider the provided context:
+        **Context:** ${content}
+
+        Also, prioritize and incorporate the user's answer when formulating your response:
+        **User's Answer:** ${userAnswer}
+
+        Prioritize the user's answer only if it's correct. If it's incomplete or incorrect, improve or correct it while keeping the response concise and to the point.
+        Provide the final answer in markdown format.`,
       system: "You are a helpfull assistant that provides informative responses in markdown format. Use the Appropiate markdown syntax for heading, lists, code blocks, and emphasis where necessary. For code blocks, use short-form smaller case languge identifiers (e.g., 'js' for javascript, 'py' for python, 'ts' for typescript, 'html' for HTML, 'css' for CSS, etc.).",
     });
 
