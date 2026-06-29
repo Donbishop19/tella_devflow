@@ -5,6 +5,8 @@ import action from "../handlers/action";
 import handleError from "../handlers/error";
 import { CreateVoteSchema, HasVotedSchema, UpdateVoteCountSchema } from "../validations";
 import { Answer, Question, Vote } from "@/database";
+import { revalidatePath } from "next/cache";
+import ROUTES from "@/constants/routes";
 
  export async function updateVoteCount(params: UpdateVoteCountParams, session?: ClientSession): Promise<ActionResponse> {
   const validationResult = await action({
@@ -69,7 +71,7 @@ export async function createVote(params: CreateVoteParams): Promise<ActionRespon
         // if the user has already voted with the same voteType, remove the vote
         await Vote.deleteOne({ _id: existingVote._id }).session(session);
         await updateVoteCount({ targetId, targetType, voteType, change: -1 }, session);
-        // if the user has already with a different voteType, update the vote
+        // if the user has already voted with a different voteType, update the vote
         await Vote.findByIdAndUpdate(
           existingVote._id,
           { voteType },
@@ -96,6 +98,8 @@ export async function createVote(params: CreateVoteParams): Promise<ActionRespon
 
     await session.commitTransaction();
     session.endSession();
+
+    revalidatePath(ROUTES.QUESTION(targetId));
 
     return { success: true }
   } catch (error) {
@@ -128,14 +132,14 @@ export async function hasVoted(params: HasVotedParams): Promise<ActionResponse<H
     });
 
     if (!vote) 
-      return { success: false, data: { hasUpVoted: false, hasDownVoted: false }
+      return { success: false, data: { hasUpvoted: false, hasDownvoted: false }
     }
 
     return {
       success: true,
       data: {
-        hasUpVoted: vote.voteType === "upvote",
-        hasDownVoted: vote.voteType === "downvote",
+        hasUpvoted: vote.voteType === "upvote",
+        hasDownvoted: vote.voteType === "downvote",
       }
     }
   } catch (error) {
