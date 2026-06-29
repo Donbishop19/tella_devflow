@@ -3,7 +3,7 @@
 import mongoose, { ClientSession } from "mongoose";
 import action from "../handlers/action";
 import handleError from "../handlers/error";
-import { CreateVoteSchema, UpdateVoteCountSchema } from "../validations";
+import { CreateVoteSchema, HasVotedSchema, UpdateVoteCountSchema } from "../validations";
 import { Answer, Question, Vote } from "@/database";
 
  export async function updateVoteCount(params: UpdateVoteCountParams, session?: ClientSession): Promise<ActionResponse> {
@@ -85,7 +85,7 @@ export async function createVote(params: CreateVoteParams): Promise<ActionRespon
       }
     } else {
       // if the user has not voted yet, create a new vote
-      await Vote.create([{ targetId, targetType, voteType, change: 1 }], { session });
+      await Vote.create([{ author: userId, actionId: targetId, actionType: targetType, voteType }], { session });
 
       
       const countResult = await updateVoteCount({ targetId, targetType, voteType, change: -1 }, session);
@@ -104,4 +104,41 @@ export async function createVote(params: CreateVoteParams): Promise<ActionRespon
     return handleError(error) as ErrorResponse;
   }
 
+}
+
+export async function hasVoted(params: HasVotedParams): Promise<ActionResponse<HasVotedResponse>> {
+  const validationResult = await action( {
+    params,
+    schema: HasVotedSchema,
+    authorize: true,
+  })
+
+  if(validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
+
+  const { targetId, targetType } = validationResult.params!;
+  const userId = validationResult.session?.user?.id;
+
+  try {
+    const vote = await Vote.findOne({
+      author: userId,
+      actionId: targetId,
+      actionType: targetType
+    });
+
+    if (!vote) 
+      return { success: false, data: { hasUpVoted: false, hasDownVoted: false }
+    }
+
+    return {
+      success: true,
+      data: {
+        hasUpVoted: vote.voteType === "upvote",
+        hasDownVoted: vote.voteType === "downvote",
+      }
+    }
+  } catch (error) {
+    return handleError(error) as ErrorResponse;
+  }
 }
