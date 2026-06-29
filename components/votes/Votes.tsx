@@ -46,9 +46,8 @@ const Votes = ({ upvotes, downvotes, hasVotedPromise,   targetId, targetType }: 
       }
 
       const successMessage = voteType === "upvote" 
-      ? `Upvote ${hasUpvoted ? "added" : "removed"} successfully`
-      : `Downvote ${hasDownvoted ? "added" : "removed"} successfully`;
-      toast(successMessage, {
+      ? `Upvote ${hasUpvoted ? "removed" : "added"} successfully`
+      : `Downvote ${hasDownvoted ? "removed" : "added"} successfully`;      toast(successMessage, {
         description: "Your vote has been recorded."
       })
 
