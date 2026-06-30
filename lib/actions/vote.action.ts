@@ -82,10 +82,13 @@ export async function createVote(
       if (existingVote.voteType === voteType) {
         // If the user has already voted with the same voteType, remove the vote
         await Vote.deleteOne({ _id: existingVote._id }).session(session);
-        await updateVoteCount(
+        const decrementResult = await updateVoteCount(
           { targetId, targetType, voteType, change: -1 },
           session
         );
+        if (!decrementResult.success) {
+          throw new Error("Failed to update vote count");
+        }
       } else {
         // If the user has already voted with a different voteType, update the vote
         await Vote.findByIdAndUpdate(
@@ -93,15 +96,20 @@ export async function createVote(
           { voteType },
           { new: true, session }
         );
-        await updateVoteCount(
+        const oldVoteResult = await updateVoteCount(
           { targetId, targetType, voteType: existingVote.voteType, change: -1 },
           session
         );
-        await updateVoteCount(
+        if (!oldVoteResult.success) {
+          throw new Error("Failed to update vote count");
+        }
+        const newVoteResult = await updateVoteCount(
           { targetId, targetType, voteType, change: 1 },
           session
         );
-      }
+        if (!newVoteResult.success) {
+          throw new Error("Failed to update vote count");
+        }      }
     } else {
       // If the user has not voted yet, create a new vote
       await Vote.create(
@@ -117,7 +125,7 @@ export async function createVote(
           session,
         }
       );
-      const countResult = await updateVoteCount({ targetId, targetType, voteType, change: -1 }, session);
+      const countResult = await updateVoteCount({ targetId, targetType, voteType, change: 1 }, session);
       if (!countResult.success) {
         throw new Error("Failed to update vote count");
       }
