@@ -1,3 +1,4 @@
+import { title } from "process";
 import ROUTES from "./routes";
 
 export const DEFAULT_EMPTY = {
@@ -51,3 +52,8 @@ export const EMPTY_COLLECTIONS = {
     href: ROUTES.COLLECTION,
   },
 };
+
+export const EMPTY_USERS = {
+  title: "No Users Found",
+  message: "You're ALONE. The only one here. More Users are coming soon"
+}
