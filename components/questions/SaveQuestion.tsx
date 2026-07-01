@@ -15,7 +15,7 @@ const SaveQuestion = ({questionId }: { questionId: string }) => {
   const handleSave = async () => {
     if (isLoading) return;
 
-    if (userId) return toast("You need to be logged in to save a question");
+    if (!userId) return toast("You need to be logged in to save a question");
 
     setIsLoading(true);
 
@@ -23,7 +23,6 @@ const SaveQuestion = ({questionId }: { questionId: string }) => {
       const { success, data, error } = await toggleSaveQuestion({ questionId });
 
       if(!success) throw new Error(error?.message || 'An error occurred');
-
       toast(`Question ${data?.saved ? "saved" : "unsaved"} successfully`)
     } catch (error) {
       toast.error("Error", {
@@ -38,9 +37,7 @@ const SaveQuestion = ({questionId }: { questionId: string }) => {
 
   return (
     <Image 
-      src={hasSaved ? "/icons/star-filled.svg" : "icons/star-red.svg"}
-      width={18}
-      height={18}
+      src={hasSaved ? "/icons/star-filled.svg" : "/icons/star-red.svg"}      height={18}
       alt="save"
       className={`cursor-pointer ${isLoading && "opacity-50"}`}
       aria-label="save question"
