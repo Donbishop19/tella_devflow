@@ -3,12 +3,23 @@
 import { toggleSaveQuestion } from "@/lib/actions/collection.action";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { useState } from "react";
+import { use, useState } from "react";
 import { toast } from "sonner";
+import { boolean } from "zod";
 
-const SaveQuestion = ({questionId }: { questionId: string }) => {
+const SaveQuestion = ({
+  questionId, 
+  hasSavedQuestionPromise 
+}: { 
+  questionId: string;
+  hasSavedQuestionPromise: Promise<ActionResponse<{saved: boolean}>>; 
+}) => {
   const session = useSession();
   const userId = session?.data?.user?.id;
+
+  const { data } = use(hasSavedQuestionPromise);
+
+  const { saved: hasSaved } = data || {};
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -33,11 +44,11 @@ const SaveQuestion = ({questionId }: { questionId: string }) => {
     }
   }
 
-  const hasSaved = false;
-
   return (
     <Image 
-      src={hasSaved ? "/icons/star-filled.svg" : "/icons/star-red.svg"}      height={18}
+      src={hasSaved ? "/icons/star-filled.svg" : "/icons/star-red.svg"}
+      width={18}      
+      height={18}
       alt="save"
       className={`cursor-pointer ${isLoading && "opacity-50"}`}
       aria-label="save question"
