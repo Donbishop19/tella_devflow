@@ -105,20 +105,19 @@ export async function getSavedQuestion(params: PaginatedSearchParams): Promise<A
   }
 
   const userId = validationResult.session?.user?.id;
-  const { page = 1, pageSize = 10, query, filter } = params;
+  const { page = 1, pageSize = 10, query, filter } = validationResult.params!;
 
-  const skip = (Number(page) - 1) * pageSize;
-  const limit = pageSize;
-
+  const skip = (Number(page) - 1) * Number(pageSize);
+  const limit = Number(pageSize);
   const sortOptions: Record<string, Record<string, 1 | -1>> = {
     mostrecent: {  "question.createdAt": -1 },
     oldest: { "question.createdAt": 1 },
     mostvoted: { "question.upvotes": -1 },
     mostviewed: { "question.views": -1 },
-    mostanswerd: { "question.answers": -1 },
+    mostanswered: { "question.answers": -1 },
   }
 
-  const sortCateria = sortOptions[filter as keyof typeof sortOptions] || {
+  const sortCriteria = sortOptions[filter as keyof typeof sortOptions] || {
     "question.createdAt": -1
   };
 
@@ -146,7 +145,7 @@ export async function getSavedQuestion(params: PaginatedSearchParams): Promise<A
         $lookup: {
           from: "tags",
           localField: "question.tags",
-          foreignField: "-id",
+          foreignField: "_id",
           as: "question.tags",
         }
       }
@@ -167,14 +166,13 @@ export async function getSavedQuestion(params: PaginatedSearchParams): Promise<A
       ...pipeline, { $count: "count" }
     ]);
 
-    pipeline.push({ $sort: sortCateria }, { $skip: skip }, { $limit: limit });
+    pipeline.push({ $sort: sortCriteria }, { $skip: skip }, { $limit: limit });
 
     pipeline.push({$project: { question: 1, author: 1 } });
 
     const questions = await Collection.aggregate(pipeline);
 
-    const isNext = totalCount.count > skip + questions.length;
-
+    const isNext = (totalCount?.count ?? 0) > skip + questions.length;
     return {
       success: true,
       data: {
