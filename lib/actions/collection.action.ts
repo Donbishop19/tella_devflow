@@ -140,7 +140,7 @@ export async function getSavedQuestion(params: PaginatedSearchParams): Promise<A
           as: "question.author",
         }
       },
-      {$unwind: "question.author"},
+      {$unwind: "$question.author"},
       {
         $lookup: {
           from: "tags",
