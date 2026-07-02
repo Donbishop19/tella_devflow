@@ -7,6 +7,8 @@ import { getSavedQuestion } from "@/lib/actions/collection.action";
 import ROUTES from "@/constants/routes";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import CommonFilter from "@/components/filters/CommonFilter";
+import { CollectionFilters } from "@/constants/filters";
 
 interface SearchParams {
   searchParams: Promise<{ [key: string]: string }>;
@@ -40,6 +42,8 @@ const Collection = async ({ searchParams }: SearchParams) => {
           placeholder="Search questions..."
           otherClasses="flex-1"
         />
+
+        <CommonFilter filters={CollectionFilters} otherClasses="min-h-[56px] sm:min-[170px]" />
       </div>
 
       <DataRenderer 
