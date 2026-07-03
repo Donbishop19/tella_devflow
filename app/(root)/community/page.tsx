@@ -11,9 +11,10 @@ import React from 'react'
 
 const Community = async ({searchParams}: RouteParams) => {
   const { page, pageSize, query, filter } = await searchParams;
+  const currentPage = Number(page) || 1;
 
   const { success, data, error } = await getUser({
-    page: Number(page) || 1,
+    page: currentPage,
     pageSize: Number(pageSize) || 10,
     query,
     filter,
@@ -50,7 +51,7 @@ const Community = async ({searchParams}: RouteParams) => {
         )}
       />
 
-      <Pagination page={page} isNext={isNext || false} />
+      <Pagination page={currentPage} isNext={isNext || false} />
     </div>
   );
 };

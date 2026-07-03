@@ -18,9 +18,10 @@ interface SearchParams {
 
 const Home = async ({ searchParams }: SearchParams) => {
   const { page, pageSize, query, filter } = await searchParams;
+  const currentPage = Number(page) || 1;
 
   const { success, data, error } = await getQuestions({
-    page: Number(page) || 1,
+    page: currentPage,
     pageSize: Number(pageSize) || 10,
     query: query || "",
     filter: filter || "",
@@ -70,7 +71,7 @@ const Home = async ({ searchParams }: SearchParams) => {
         )}
       />
 
-      <Pagination page={page} isNext={isNext || false} />
+      <Pagination page={currentPage} isNext={isNext || false} />
     </>
   );
 };
