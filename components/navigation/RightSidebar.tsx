@@ -8,10 +8,12 @@ import DataRenderer from '../DataRenderer'
 import { getTopTags } from '@/lib/actions/tag.action'
 
 const RightSidebar = async () => {
-  const { success, data: hotQuestions, error } = await getHotQuestions();
-  const { success: tagSuccess, data: tags, error: tagError } = await getTopTags();
-
-  return <section className='pt-36 custom-scrollbar background-light900_dark200 light-border sticky right-0 top-0 flex h-screen w-87.5 flex-col gap-6 overflow-y-auto border-l p-6 shadow-light-300 dark:shadow-none max-xl:hidden ' >
+  const [
+    { success, data: hotQuestions, error },
+    { success: tagSuccess, data: tags, error: tagError },
+  ] = await Promise.all([getHotQuestions(), getTopTags()]); 
+  
+   return <section className='pt-36 custom-scrollbar background-light900_dark200 light-border sticky right-0 top-0 flex h-screen w-87.5 flex-col gap-6 overflow-y-auto border-l p-6 shadow-light-300 dark:shadow-none max-xl:hidden ' >
     <div>
       <h3 className='h3-bold text-dark200_light900'>Top Questions</h3>
       

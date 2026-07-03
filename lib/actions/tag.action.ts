@@ -4,7 +4,6 @@ import handleError from "../handlers/error";
 import { GetTagQuestionsSchema, PaginatedSearchParamsSchema } from "../validations";
 import { Question, Tag } from "@/database";
 import dbConnect from "../mongoose";
-import { success } from "zod";
 
 export const getTags = async (
   params: PaginatedSearchParams
