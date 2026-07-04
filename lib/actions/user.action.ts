@@ -70,7 +70,7 @@ export async function getUser(params: PaginatedSearchParams): Promise<ActionResp
 }
 
 export async function getUsers(params: GetUserParams): Promise<ActionResponse<{
-  user: typeof User;
+  user: User;
   totalQuestions: number;
   totalAnswers: number;
 }>> {
@@ -90,9 +90,10 @@ export async function getUsers(params: GetUserParams): Promise<ActionResponse<{
 
     if (!user) throw new Error("User not found");
 
-    const totalQuestions = await Question.countDocuments({ author: userId });
-    const totalAnswers = await Answer.countDocuments({ answers: userId });
-
+    const [totalQuestions, totalAnswers] = await Promise.all([
+      Question.countDocuments({ author: userId }),
+      Answer.countDocuments({ author: userId }),
+    ]);
     return {
       success: true,
       data: {
