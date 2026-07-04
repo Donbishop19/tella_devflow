@@ -55,7 +55,7 @@ const Profile = async ({  params}: RouteParams) => {
             {location && (
               <ProfileLink 
                 imgUrl="/icons/location.svg"
-                title="Portfolio"
+                title="Location"
               />
             )}
             <ProfileLink 

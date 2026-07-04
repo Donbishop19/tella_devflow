@@ -18,7 +18,7 @@ const ProfileLink = ({ imgUrl, href, title }: Props) => {
       />
 
       {href ? (
-        <Link href={href} target="_blank" rel="noopener moreferrer" className="paragraph-medium text-link-100">
+        <Link href={href} target="_blank" rel="noopener noreferrer" className="paragraph-medium text-link-100">
           {title}
         </Link>
       ) : (
