@@ -4,7 +4,7 @@ import { QueryFilter } from "mongoose";
 import { Answer, Question, User } from "@/database";
 import action from "../handlers/action";
 import handleError from "../handlers/error";
-import { GetUserSchema, PaginatedSearchParamsSchema } from "../validations";
+import { GetUserQuestionsSchema, GetUserSchema, PaginatedSearchParamsSchema } from "../validations";
 
 export async function getUser(params: PaginatedSearchParams): Promise<ActionResponse<{users: User[], isNext: boolean}>> {
   const validationResult = await action({
@@ -113,7 +113,7 @@ export async function getUsers(params: GetUserParams): Promise<ActionResponse<{
 }>> {
   const validationResult = await action({
     params,
-    schema: GetUserSchema,
+    schema: GetUserQuestionsSchema,
   });
 
   if (validationResult instanceof Error) {

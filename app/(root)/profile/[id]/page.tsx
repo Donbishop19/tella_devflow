@@ -44,8 +44,8 @@ const Profile = async ({  params, searchParams}: RouteParams) => {
     pageSize: Number(pageSize) || 10,
   });
 
-  const { questions, isNext: hasMoreQuestions } = userQuestions!;
-
+  const { questions, isNext: hasMoreQuestions } = userQuestions ?? { questions: [], isNext: false };
+  
   const { _id, name, image, portfolio, location, createdAt, username, bio } = user;
 
 
