@@ -4,7 +4,7 @@ import { QueryFilter } from "mongoose";
 import { Answer, Question, User } from "@/database";
 import action from "../handlers/action";
 import handleError from "../handlers/error";
-import { GetUserSchema, PaginatedSearchParamsSchema } from "../validations";
+import { GetUserQuestionsSchema, GetUsersAnswersSchema, GetUserSchema, PaginatedSearchParamsSchema } from "../validations";
 
 export async function getUser(params: PaginatedSearchParams): Promise<ActionResponse<{users: User[], isNext: boolean}>> {
   const validationResult = await action({
@@ -113,7 +113,7 @@ export async function getUsers(params: GetUserParams): Promise<ActionResponse<{
 }>> {
   const validationResult = await action({
     params,
-    schema: GetUserSchema,
+    schema: GetUserQuestionsSchema,
   });
 
   if (validationResult instanceof Error) {
@@ -154,7 +154,7 @@ export async function getUsers(params: GetUserParams): Promise<ActionResponse<{
 }>> {
   const validationResult = await action({
     params,
-    schema: GetUserSchema,
+    schema: GetUsersAnswersSchema,
   });
 
   if (validationResult instanceof Error) {
@@ -170,12 +170,12 @@ export async function getUsers(params: GetUserParams): Promise<ActionResponse<{
     const totalAnswers = await Answer.countDocuments({ author: userId });
 
     const answers = await Answer.find({  author: userId})
+      .sort({ createdAt: -1 })
       .populate("author", "_id name image")
       .skip(skip)
       .limit(limit);
 
     const isNext = totalAnswers > skip + answers.length;  
-
     return {
       success: true,
       data: {

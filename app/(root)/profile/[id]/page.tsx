@@ -17,7 +17,7 @@ import AnswerCard from '@/components/cards/AnswerCard';
 
 const Profile = async ({  params, searchParams}: RouteParams) => {
   const { id } = await params;
-  const { page, pageSize } = await searchParams;
+  const { questionPage, questionPageSize, answerPage, answerPageSize } = await searchParams;
 
   if (!id) notFound();
 
@@ -41,8 +41,8 @@ const Profile = async ({  params, searchParams}: RouteParams) => {
     error: userQuestionsError,
   } = await getUsersQuestions({
     userId: id,
-    page: Number(page) || 1,
-    pageSize: Number(pageSize) || 10,
+    page: Number(questionPage) || 1,
+    pageSize: Number(questionPageSize) || 10,
   });
 
   const { questions, isNext: hasMoreQuestions } = userQuestions ?? { questions: [], isNext: false };
@@ -53,8 +53,8 @@ const Profile = async ({  params, searchParams}: RouteParams) => {
     error: userAnswersError,
   } = await getUsersAnswers({
     userId: id,
-    page: Number(page) || 1,
-    pageSize: Number(pageSize) || 10,
+    page: Number(answerPage) || 1,
+    pageSize: Number(answerPageSize) || 10,
   });
 
   const { answers, isNext: hasMoreAnswers } = userAnswers ?? { answers: [], isNext: false };
@@ -146,7 +146,7 @@ const Profile = async ({  params, searchParams}: RouteParams) => {
               )}
             />
 
-            <Pagination page={page} isNext={hasMoreQuestions} />
+            <Pagination page={Number(questionPage) || 1} isNext={hasMoreQuestions} queryKey="questionPage" />
           </TabsContent>
 
 
@@ -162,16 +162,15 @@ const Profile = async ({  params, searchParams}: RouteParams) => {
                     <AnswerCard 
                       key={answer._id} 
                       {...answer} 
-                      content={answer.content.slice(0, 27)}
-                      containerClasses="card-wrapper rounded-[10px] px-7 py-9 sm:px-11"
-                      showReadMore 
-                    />
+                      containerClasses="card-wrapper rounded-[10px] px-7 py-9 sm:px-11 line-clamp-4"
+                      showReadMore={answer.content.length > 27}
+                    />                  
                   ))}
                 </div>
               )}
             />
 
-            <Pagination page={page} isNext={hasMoreAnswers || false} />
+            <Pagination page={Number(answerPage) || 1} isNext={hasMoreAnswers || false} queryKey="answerPage" />
           </TabsContent>
         </Tabs>
 

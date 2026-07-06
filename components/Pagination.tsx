@@ -8,10 +8,11 @@ import { useRouter, useSearchParams } from "next/navigation";
 interface Props {
   page: number | undefined | string;
   isNext: boolean;
-  containerClasses?: string; 
+  containerClasses?: string;
+  queryKey?: string;
 }
 
-const Pagination = ({ page = 1, isNext, containerClasses }: Props) => {
+const Pagination = ({ page = 1, isNext, containerClasses, queryKey = "page" }: Props) => {
   const searchParams = useSearchParams();
   const route = useRouter();
 
@@ -22,7 +23,7 @@ const Pagination = ({ page = 1, isNext, containerClasses }: Props) => {
     // Update newUrl
     const newUrl = formUrlQuery({
       params: searchParams.toString(),
-      key: "page",
+      key: queryKey,
       value: nextPageNumber.toString(),
     });
 
