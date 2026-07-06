@@ -1,7 +1,7 @@
 import { auth } from '@/auth';
 import ProfileLink from '@/components/user/ProfileLink';
 import UserAvatar from '@/components/UserAvatar';
-import { getUsersQuestions, getUsers, getUsersAnswers } from '@/lib/actions/user.action'
+import { getUsersQuestions, getUsers, getUsersAnswers, getUserTopTags } from '@/lib/actions/user.action'
 import { notFound } from 'next/navigation';
 
 import dayjs from "dayjs";
@@ -12,8 +12,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import DataRenderer from '@/components/DataRenderer';
 import QuestionCard from '@/components/cards/QuestionCard';
 import Pagination from '@/components/Pagination';
-import { EMPTY_ANSWERS, EMPTY_QUESTION } from '@/constants/states';
+import { EMPTY_ANSWERS, EMPTY_QUESTION, EMPTY_TAGS } from '@/constants/states';
 import AnswerCard from '@/components/cards/AnswerCard';
+import TagCard from '@/components/cards/TagCard';
 
 const Profile = async ({  params, searchParams}: RouteParams) => {
   const { id } = await params;
@@ -58,6 +59,16 @@ const Profile = async ({  params, searchParams}: RouteParams) => {
   });
 
   const { answers, isNext: hasMoreAnswers } = userAnswers ?? { answers: [], isNext: false };
+
+  const {
+    success: userTopTagsSuccess, 
+    data: userTopTags,
+    error: userTopTagsError,
+  } = await getUserTopTags({
+    userId: id,
+  });
+
+  const { tags } = userTopTags!;
   
   const { _id, name, image, portfolio, location, createdAt, username, bio } = user;
 
@@ -162,8 +173,9 @@ const Profile = async ({  params, searchParams}: RouteParams) => {
                     <AnswerCard 
                       key={answer._id} 
                       {...answer} 
-                      containerClasses="card-wrapper rounded-[10px] px-7 py-9 sm:px-11 line-clamp-4"
-                      showReadMore={answer.content.length > 27}
+                      containerClasses="card-wrapper rounded-[10px] px-7 py-9 sm:px-11 "
+                      showReadMore
+                      content={answer.content.slice(0, 27)}
                     />                  
                   ))}
                 </div>
@@ -177,7 +189,26 @@ const Profile = async ({  params, searchParams}: RouteParams) => {
         <div className="flex w-full min-w-62.5 flex-1 flex-col max-lg:hidden">
           <h3 className='h3-bold text-dark200_light900'>Top Tags</h3>
           <div className="mt-7 flex flex-col gap-4">
-            <p>List of Tech</p>
+            <DataRenderer
+              empty={EMPTY_TAGS}
+              success={userTopTagsSuccess}
+              error={userTopTagsError}
+              data={tags}
+              render={(tags) => (
+                <div className='mt-3 flex w-full flex-col gap-4'>
+                  {tags.map((tag) => (
+                    <TagCard 
+                      key={tag._id} 
+                      _id={tag._id} 
+                      name={tag.name} 
+                      questions={tag.count} 
+                      showCount
+                      compact
+                    />
+                  ))}
+                </div>
+              )}
+            />
           </div>
         </div>
       </section>

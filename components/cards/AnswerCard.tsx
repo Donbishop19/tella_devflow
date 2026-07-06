@@ -44,7 +44,7 @@ const AnswerCard = ({
           <p className='body-semibold text-dark300_light700'>{author.name ?? "Anonymous"}</p>
 
           <p className='small-regular text-light-400_light500 ml-0.5 mt-0.5 line-clamp-1'>
-            <span className='max-sm:hidden'>*</span>
+            <span className='max-sm:hidden'>•</span>
             answered {getTimeStamp(createdAt)}
           </p>
         </Link>
