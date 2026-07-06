@@ -68,7 +68,7 @@ const Profile = async ({  params, searchParams}: RouteParams) => {
     userId: id,
   });
 
-  const { tags } = userTopTags!;
+  const { tags } = userTopTags ?? { tags: [] };
   
   const { _id, name, image, portfolio, location, createdAt, username, bio } = user;
 
@@ -174,8 +174,12 @@ const Profile = async ({  params, searchParams}: RouteParams) => {
                       key={answer._id} 
                       {...answer} 
                       containerClasses="card-wrapper rounded-[10px] px-7 py-9 sm:px-11 "
-                      showReadMore
-                      content={answer.content.slice(0, 27)}
+                      showReadMore={answer.content.length > 27}
+                      content={
+                        answer.content.length > 27
+                        ? `${answer.content.slice(0, 27)}...`
+                        : answer.content
+                      }
                     />                  
                   ))}
                 </div>
