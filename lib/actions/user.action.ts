@@ -4,7 +4,7 @@ import { QueryFilter } from "mongoose";
 import { Answer, Question, User } from "@/database";
 import action from "../handlers/action";
 import handleError from "../handlers/error";
-import { GetUserQuestionsSchema, GetUserSchema, PaginatedSearchParamsSchema } from "../validations";
+import { GetUserSchema, PaginatedSearchParamsSchema } from "../validations";
 
 export async function getUser(params: PaginatedSearchParams): Promise<ActionResponse<{users: User[], isNext: boolean}>> {
   const validationResult = await action({
@@ -107,13 +107,13 @@ export async function getUsers(params: GetUserParams): Promise<ActionResponse<{
   }
  }
 
- export async function getUserQuestions(params: GetUserQuestionsParams): Promise<ActionResponse<{
+ export async function getUsersQuestions(params: GetUserQuestionsParams): Promise<ActionResponse<{
   questions: Question[];
   isNext: boolean;
 }>> {
   const validationResult = await action({
     params,
-    schema: GetUserQuestionsSchema,
+    schema: GetUserSchema,
   });
 
   if (validationResult instanceof Error) {
@@ -140,6 +140,46 @@ export async function getUsers(params: GetUserParams): Promise<ActionResponse<{
       success: true,
       data: {
        questions: JSON.parse(JSON.stringify(questions)),
+       isNext,
+      }
+    }
+  } catch (error) {
+    return handleError(error) as ErrorResponse;
+  }
+ }
+
+ export async function getUsersAnswers(params: GetUserAnswersParams): Promise<ActionResponse<{
+  answers: Answer[];
+  isNext: boolean;
+}>> {
+  const validationResult = await action({
+    params,
+    schema: GetUserSchema,
+  });
+
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
+
+  const { userId, page = 1, pageSize = 10 } = params;
+
+  const skip = (Number(page) - 1) * pageSize;
+  const limit = pageSize;
+
+  try {
+    const totalAnswers = await Answer.countDocuments({ author: userId });
+
+    const answers = await Answer.find({  author: userId})
+      .populate("author", "_id name image")
+      .skip(skip)
+      .limit(limit);
+
+    const isNext = totalAnswers > skip + answers.length;  
+
+    return {
+      success: true,
+      data: {
+       answers: JSON.parse(JSON.stringify(answers)),
        isNext,
       }
     }

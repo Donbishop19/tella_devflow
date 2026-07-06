@@ -1,7 +1,7 @@
 import { auth } from '@/auth';
 import ProfileLink from '@/components/user/ProfileLink';
 import UserAvatar from '@/components/UserAvatar';
-import { getUserQuestions, getUsers } from '@/lib/actions/user.action'
+import { getUsersQuestions, getUsers, getUsersAnswers } from '@/lib/actions/user.action'
 import { notFound } from 'next/navigation';
 
 import dayjs from "dayjs";
@@ -12,7 +12,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import DataRenderer from '@/components/DataRenderer';
 import QuestionCard from '@/components/cards/QuestionCard';
 import Pagination from '@/components/Pagination';
-import { EMPTY_QUESTION } from '@/constants/states';
+import { EMPTY_ANSWERS, EMPTY_QUESTION } from '@/constants/states';
+import AnswerCard from '@/components/cards/AnswerCard';
 
 const Profile = async ({  params, searchParams}: RouteParams) => {
   const { id } = await params;
@@ -38,13 +39,25 @@ const Profile = async ({  params, searchParams}: RouteParams) => {
     success: userQuestionsSuccess, 
     data: userQuestions,
     error: userQuestionsError,
-  } = await getUserQuestions({
+  } = await getUsersQuestions({
     userId: id,
     page: Number(page) || 1,
     pageSize: Number(pageSize) || 10,
   });
 
   const { questions, isNext: hasMoreQuestions } = userQuestions ?? { questions: [], isNext: false };
+
+  const {
+    success: userAnswersSuccess, 
+    data: userAnswers,
+    error: userAnswersError,
+  } = await getUsersAnswers({
+    userId: id,
+    page: Number(page) || 1,
+    pageSize: Number(pageSize) || 10,
+  });
+
+  const { answers, isNext: hasMoreAnswers } = userAnswers ?? { answers: [], isNext: false };
   
   const { _id, name, image, portfolio, location, createdAt, username, bio } = user;
 
@@ -116,7 +129,7 @@ const Profile = async ({  params, searchParams}: RouteParams) => {
         <Tabs defaultValue="top-posts" className="flex-2">
           <TabsList className="background-light800_dark400 min-h-10.5 p-1">
             <TabsTrigger value="top-posts" className="tab">Top Posts</TabsTrigger>
-            <TabsTrigger value="answers">Answers</TabsTrigger>
+            <TabsTrigger value="answers" className="tab">Answers</TabsTrigger>
           </TabsList>
           <TabsContent value="top-posts" className="mt-5 flex w-full flex-col gap-6">
             <DataRenderer
@@ -124,7 +137,7 @@ const Profile = async ({  params, searchParams}: RouteParams) => {
               success={userQuestionsSuccess}
               error={userQuestionsError}
               data={questions}
-              render={(hotQuestions) => (
+              render={(questions) => (
                 <div className='flex w-full flex-col gap-6'>
                   {questions.map((question) => (
                     <QuestionCard key={question._id} question={question} />
@@ -137,7 +150,29 @@ const Profile = async ({  params, searchParams}: RouteParams) => {
           </TabsContent>
 
 
-          <TabsContent value="answers" className="flex w-full flex-col gap-6">List of Answers</TabsContent>
+          <TabsContent value="answers" className="flex w-full flex-col gap-6">
+            <DataRenderer
+              empty={EMPTY_ANSWERS}
+              success={userAnswersSuccess}
+              error={userAnswersError}
+              data={answers}
+              render={(answers) => (
+                <div className='flex w-full flex-col gap-6'>
+                  {answers.map((answer) => (
+                    <AnswerCard 
+                      key={answer._id} 
+                      {...answer} 
+                      content={answer.content.slice(0, 27)}
+                      containerClasses="card-wrapper rounded-[10px] px-7 py-9 sm:px-11"
+                      showReadMore 
+                    />
+                  ))}
+                </div>
+              )}
+            />
+
+            <Pagination page={page} isNext={hasMoreAnswers || false} />
+          </TabsContent>
         </Tabs>
 
         <div className="flex w-full min-w-62.5 flex-1 flex-col max-lg:hidden">

@@ -65,6 +65,7 @@ const RightSidebar = async () => {
                 name={name} 
                 questions={questions} 
                 showCount 
+                compact
               />
             ))}
           </div>
