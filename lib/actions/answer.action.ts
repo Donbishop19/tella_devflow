@@ -136,36 +136,44 @@ export async function deleteAnswer(params: DeleteAnswerParams): Promise<ActionRe
 
   const { answerId } = validationResult.params!;
   const { user } = validationResult.session!;
+  const session = await mongoose.startSession();
+  session.startTransaction();
 
   try {
-    const answer = await Answer.findById(answerId);
+    const answer = await Answer.findById(answerId).session(session);
     if (!answer) throw new Error("Answer not found");
 
-    if (answer.author.toSting() === user?.id) {
+    if (answer.author.toString() !== user?.id) {
       throw new Error("You're not allowed to delete this answer");
     }
 
-    // Reduce the question answers count
-    await Question.findByIdAndUpdate(
+    await Vote.deleteMany({
+      actionId: answerId,
+      actionType: "answer",
+    }).session(session);
+
+    await Answer.findByIdAndDelete(answerId).session(session);
+
+    const question = await Question.findByIdAndUpdate(
       answer.question,
       { $inc: { answers: -1 } },
-      { new: true }
+      { new: true, session }
     );
 
-    // Delete votes associated with answer
-    await Vote.deleteMany({ 
-      actionId: answerId, 
-      actionType: "answer",
-     });
+    if (!question) throw new Error("Question not found");
 
-    // Delete the answer
-    await Answer.findByIdAndDelete(answerId);
-    
+    await session.commitTransaction();
+
     revalidatePath(`/profile/${user?.id}`);
 
     return { success: true };
-
   } catch (error) {
+    if (session.inTransaction()) {
+      await session.abortTransaction();
+    }
+
     return handleError(error) as ErrorResponse;
+  } finally {
+    await session.endSession();
   }
 }

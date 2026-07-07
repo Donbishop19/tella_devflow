@@ -362,8 +362,8 @@ export async function deleteQuestion(params: DeleteQuestionParams): Promise<Acti
     const question = await Question.findById(questionId).session(session);
     if (!question) throw new Error("Question not found");
 
-    if  (question.author.toString() === user?.id) throw new Error("You are not authorize to delete this question");
-
+    if (question.author.toString() !== user?.id) throw new Error("You are not authorized to delete this question");
+    
     // Delete references from collection
     await Collection.deleteMany({ question: questionId }).session(session);
 
