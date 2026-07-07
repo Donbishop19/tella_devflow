@@ -154,7 +154,7 @@ const Profile = async ({  params, searchParams}: RouteParams) => {
                     <QuestionCard 
                       key={question._id} 
                       question={question} 
-                      showActionBtns={loggedInUser?.user?.id === question.author._id}
+                      showActionBtns={loggedInUser?.user?.id === question.author._id.toString()}
                     />
                   ))}
                 </div>
@@ -184,7 +184,7 @@ const Profile = async ({  params, searchParams}: RouteParams) => {
                         ? `${answer.content.slice(0, 27)}...`
                         : answer.content
                       }
-                      showActionBtns={loggedInUser?.user?.id === answer.author._id}
+                      showActionBtns={loggedInUser?.user?.id === answer.author._id.toString()}
                     />                  
                   ))}
                 </div>
