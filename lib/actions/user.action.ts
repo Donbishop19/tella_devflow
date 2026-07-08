@@ -69,6 +69,7 @@ export async function getUser(params: PaginatedSearchParams): Promise<ActionResp
   }
 }
 
+
 export async function getUsers(params: GetUserParams): Promise<ActionResponse<{
   user: User;
   totalQuestions: number;

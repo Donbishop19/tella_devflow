@@ -5,6 +5,7 @@ import { GetTagQuestionsSchema, PaginatedSearchParamsSchema } from "../validatio
 import { Question, Tag } from "@/database";
 import dbConnect from "../mongoose";
 
+
 export const getTags = async (
   params: PaginatedSearchParams
 ): Promise<ActionResponse<{ tags: Tag[]; isNext: boolean }>> => {
