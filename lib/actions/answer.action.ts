@@ -12,7 +12,6 @@ import handleError from "../handlers/error";
 import { AnswerServerSchema, DeleteAnswerSchema, GetAnswersSchema } from "../validations";
 import { after } from "next/server";
 import { createInteraction } from "./interaction.action";
-
 export async function createAnswer(
   params: CreateAnswerParams
 ): Promise<ActionResponse<IAnswerDoc>> {
@@ -53,18 +52,17 @@ export async function createAnswer(
     question.answers += 1;
     await question.save({ session });
 
-    // log the interaction
+    await session.commitTransaction();
+
+    // log the interaction only after the write has been durably committed
     after(async () => {
       await createInteraction({
         action: "post",
         actionId: newAnswer._id.toString(),
         actionTarget: "answer",
         authorId: userId as string,
-      })
+      });
     });
-
-    await session.commitTransaction();
-
     revalidatePath(ROUTES.QUESTION(questionId));
 
     return {

@@ -71,18 +71,17 @@ export async function createQuestion(
       { session }
     );
 
-    // log the interaction
+    await session.commitTransaction();
+
+    // log the interaction only after the write has been durably committed
     after(async () => {
       await createInteraction({
         action: "post",
         actionId: question._id.toString(),
         actionTarget: "question",
         authorId: userId as string,
-      })
-    })
-
-    await session.commitTransaction();
-
+      });
+    });
     return { success: true, data: JSON.parse(JSON.stringify(question)) };
   } catch (error) {
     if (session.inTransaction()) {

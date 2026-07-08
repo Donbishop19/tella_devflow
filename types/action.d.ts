@@ -1,5 +1,3 @@
-import { IInteractionDoc } from "@/database/interaction.model";
-import mongoose from "mongoose";
 
 interface SignInWithOAuthParams {
   provider: "github" | "google";

@@ -5,7 +5,6 @@ import action from "../handlers/action";
 import { CreateInteractionSchema } from "../validations";
 import handleError from "../handlers/error";
 import  mongoose  from "mongoose";
-import { CreateInteractionParams, UpdateReputationParams } from "@/types/action";
 import { User, Interaction, Question, Answer } from "@/database";
 
 export async function createInteraction(params: CreateInteractionParams): Promise<ActionResponse<IInteractionDoc>> {
