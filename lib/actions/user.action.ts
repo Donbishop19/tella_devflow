@@ -270,24 +270,26 @@ export async function getUserStats(params: GetUserParams): Promise<ActionRespons
       }
     ]);
 
+    const safeQuestionStats = questionStats ?? { count: 0, upvotes: 0, views: 0 };
+    const safeAnswerStats = answerStats ?? { count: 0, upvotes: 0 };
+
     const badges = assignBadges({
       criteria: [
-        { type: "ANSWER_COUNT", count: answerStats.count },
-        { type: "QUESTION_COUNT", count: questionStats.count },
-        { type: "QUESTION_UPVOTES", count: questionStats.upvotes + answerStats.upvotes },
-        { type: "TOTAL_VIEWS", count: questionStats.views },
+        { type: "ANSWER_COUNT", count: safeAnswerStats.count },
+        { type: "QUESTION_COUNT", count: safeQuestionStats.count },
+        { type: "QUESTION_UPVOTES", count: safeQuestionStats.upvotes + safeAnswerStats.upvotes },
+        { type: "TOTAL_VIEWS", count: safeQuestionStats.views },
       ]
     }); 
 
     return {
       success: true,
       data: {
-        totalQuestions: questionStats.count,
-        totalAnswers: answerStats.count,
+        totalQuestions: safeQuestionStats.count,
+        totalAnswers: safeAnswerStats.count,
         badges,
       }
-    }
-    
+    }    
   } catch (error) {
     return handleError(error) as ErrorResponse;
   }

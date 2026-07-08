@@ -36,7 +36,21 @@ const Profile = async ({  params, searchParams}: RouteParams) => {
 
   const { user } = data!;
 
-  const { data: userStats } = await getUserStats({ userId: id });
+  const {
+    success: userStatsSuccess,
+    data: userStats,
+    error: userStatsError,
+  } = await getUserStats({ userId: id });
+
+  const stats = userStats ?? {
+    totalQuestions: 0,
+    totalAnswers: 0,
+    badges: {
+      GOLD: 0,
+      SILVER: 0,
+      BRONZE: 0,
+    },
+  };
 
   const {
     success: userQuestionsSuccess, 
@@ -128,16 +142,18 @@ const Profile = async ({  params, searchParams}: RouteParams) => {
         </div>
       </section>
 
-      <Stats 
-        totalQuestions={userStats?.totalQuestions || 0}
-        totalAnswers={userStats?.totalAnswers || 0}
-        badges={ userStats?.badges || {
-          GOLD: 0,
-          SILVER: 0,
-          BRONZE: 0,
-        }}
-        reputationPoints={user.reputation || 0}
-      />
+      {userStatsSuccess ? (
+        <Stats 
+          totalQuestions={stats.totalQuestions}
+          totalAnswers={stats.totalAnswers}
+          badges={stats.badges}
+          reputationPoints={user.reputation || 0}
+        />
+      ) : (
+        <div className="mt-5 rounded-md border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-600">
+          {userStatsError?.message || "Unable to load profile stats."}
+        </div>
+      )}
 
       <section className='mt-10 flex gap-10'>
         <Tabs defaultValue="top-posts" className="flex-2">
