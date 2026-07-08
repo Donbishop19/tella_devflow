@@ -12,8 +12,7 @@ const filters = [
   { name: "Newest", value: "newest" },
   { name: "Popular", value: "popular" },
   { name: "Unanswered", value: "unanswered" },
-  { name: "Recommeded", value: "recommended" },
-];
+  { name: "Recommended", value: "recommended" },];
 
 const HomeFilter = () => {
   const router = useRouter();

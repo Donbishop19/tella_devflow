@@ -230,7 +230,9 @@ export async function getRecommendedQuestions({
   const recommendedQuery:  QueryFilter<typeof Question> = {
     _id: { $nin: interactedQuestionIds },
     author: { $ne: new Types.ObjectId(userId) },
-    tags: { $nin: uniqueTagIds.map((id) => new Types.ObjectId(id)) },
+    tags: uniqueTagIds.length
+      ? { $in: uniqueTagIds.map((id) => new Types.ObjectId(id)) }
+      : {},
   };
 
   if (query) {
@@ -308,15 +310,18 @@ export async function getQuestions(params: PaginatedSearchParams): Promise<Actio
     if (!userId) {
       return { success: true, data: { questions: [], isNext: false } };
     }
-    
-    const recommended = await getRecommendedQuestions({
-      userId,
-      query,
-      skip,
-      limit,
-    });
 
-    return { success: true, data: recommended }
+    try {
+      const recommended = await getRecommendedQuestions({
+        userId,
+        query,
+        skip,
+        limit,
+      });
+      return { success: true, data: recommended };
+    } catch (error) {
+      return handleError(error) as ErrorResponse;
+    }
   }
 
   if (query) {
