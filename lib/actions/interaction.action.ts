@@ -6,7 +6,7 @@ import { CreateInteractionSchema } from "../validations";
 import handleError from "../handlers/error";
 import  mongoose  from "mongoose";
 import { CreateInteractionParams, UpdateReputationParams } from "@/types/action";
-import { User, Interaction } from "@/database";
+import { User, Interaction, Question, Answer } from "@/database";
 
 export async function createInteraction(params: CreateInteractionParams): Promise<ActionResponse<IInteractionDoc>> {
   const validationResult = await action({
@@ -23,7 +23,6 @@ export async function createInteraction(params: CreateInteractionParams): Promis
     action: actionType,
     actionId,
     actionTarget,
-    authorId, //target user who own the content (question/answer)
   } = validationResult.params!;
   const userId = validationResult.session?.user?.id;
 
@@ -31,6 +30,16 @@ export async function createInteraction(params: CreateInteractionParams): Promis
   session.startTransaction();
 
   try {
+    const ownerDoc = actionTarget === "question"
+      ? await Question.findById(actionId).select("author").session(session)
+      : await Answer.findById(actionId).select("author").session(session);
+
+    if (!ownerDoc?.author) {
+      throw new Error("Content not found");
+    }
+
+    const authoritativeAuthorId = ownerDoc.author.toString();
+
     const [interaction] = await Interaction.create(
       [
         {
@@ -48,7 +57,7 @@ export async function createInteraction(params: CreateInteractionParams): Promis
       interaction,
       session,
       performerId: userId!,
-      authorId,
+      authorId: authoritativeAuthorId,
     })
 
     await session.commitTransaction();

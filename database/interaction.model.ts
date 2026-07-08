@@ -10,14 +10,13 @@ export interface IInteraction {
 export const InteractionActionEnums = [
   "view",
   "upvote",
-  "downvotes",
+  "downvote",
   "bookmark",
   "post",
   "edit",
   "delete",
   "search",
 ] as const;
-
 
 export interface IInteractionDoc extends IInteraction, Document {}
 const InteractionSchema = new Schema<IInteraction>(
