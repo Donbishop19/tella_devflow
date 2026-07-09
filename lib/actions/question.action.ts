@@ -230,9 +230,7 @@ export async function getRecommendedQuestions({
   const recommendedQuery:  QueryFilter<typeof Question> = {
     _id: { $nin: interactedQuestionIds },
     author: { $ne: new Types.ObjectId(userId) },
-    tags: uniqueTagIds.length
-      ? { $in: uniqueTagIds.map((id) => new Types.ObjectId(id)) }
-      : {},
+    tags: { $nin: uniqueTagIds.map((id) => new Types.ObjectId(id)) },
   };
 
   if (query) {
@@ -323,7 +321,7 @@ export async function getQuestions(params: PaginatedSearchParams): Promise<Actio
       return handleError(error) as ErrorResponse;
     }
   }
-
+  
   if (query) {
     filterQuery.$or = [
       {title: { $regex: new RegExp(query, "i") }}, 
