@@ -258,10 +258,10 @@ export async function getRecommendedQuestions({
 }
 
 export const getQuestion = cache(async function getQuestion(
-  params: GetQuestionParams
+  questionId: string
 ): Promise<ActionResponse<Question>> {
   const validationResult = await action({
-    params,
+    params: { questionId },
     schema: GetQuestionSchema,
     authorize: true,
   });
@@ -270,10 +270,10 @@ export const getQuestion = cache(async function getQuestion(
     return handleError(validationResult) as ErrorResponse;
   }
 
-  const {  questionId } = validationResult.params!;
+  const { questionId: validatedQuestionId } = validationResult.params!;
 
   try {
-    const question = await Question.findById(questionId).populate("tags")
+    const question = await Question.findById(validatedQuestionId).populate("tags")
     .populate("author", "_id name image");
 
     if (!question) {

@@ -24,7 +24,7 @@ export async function generateMetadata({
  }: RouteParams): Promise<Metadata> {
   const { id } = await params;
 
-  const { success, data: question } = await getQuestion({  questionId: id });
+  const { success, data: question } = await getQuestion(id);
 
   if (!success || !question) {
     return {
@@ -49,7 +49,7 @@ const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
 
   const { page, pageSize, filter } = await searchParams;
 
-  const { success, data: question } = await getQuestion({  questionId: id });
+  const { success, data: question } = await getQuestion(id);
 
   after(async () => {
     await incrementViews({ questionId: id });

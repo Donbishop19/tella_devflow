@@ -13,7 +13,7 @@ const EditQuestion = async ({ params }: RouteParams) => {
   
   if(!session) redirect('/sign-in');
 
-  const { data: question, success } = await getQuestion({ questionId: id });
+  const { data: question, success } = await getQuestion(id);
 
   if(!success) return notFound();
 
