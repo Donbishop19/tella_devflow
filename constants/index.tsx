@@ -1,3 +1,7 @@
+// constants/index.ts
+import type { Metadata } from "next";
+import type { Viewport } from "next";
+
 export const sidebarLinks = [
   {
     imgURL: "/icons/home.svg",
@@ -62,4 +66,65 @@ export const BADGE_CRITERIA = {
     SILVER: 10000,
     GOLD: 100000,
   },
+};
+
+export const siteMetadata: Metadata = {
+  title: "Dev Overflow",
+  description:
+    "Dev Overflow is a community-driven platform to ask and answer real-world programming questions. Learn, grow, and connect with developers around the world.",
+  generator: "Next.js",
+  applicationName: "Dev Overflow",
+  referrer: "origin-when-cross-origin",
+  keywords: [
+    "Dev Overflow",
+    "programming questions",
+    "developer Q&A",
+    "web development",
+    "JavaScript",
+    "React",
+    "Node.js",
+    "algorithms",
+    "data structures",
+    "developer community",
+  ],
+  authors: [
+    { name: "Tella" },
+    { name: "Dev Overflow Team", url: "https://devoverflow.dev/team" },
+  ],
+  creator: "Adrian",
+  publisher: "Dev Overflow",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    nocache: false,
+    googleBot: {
+      index: true,
+      follow: true,
+      noimageindex: false,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  icons: {
+    icon: "/images/site-logo.svg",
+    shortcut: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+    other: [
+      {
+        rel: "mask-icon",
+        url: "/safari-pinned-tab.svg",
+        color: "#5bbad5",
+      },
+    ],
+  },
+};
+
+export const siteViewport: Viewport = {
+  themeColor: "#18181b",
 };

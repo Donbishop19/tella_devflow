@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import localFont from "next/font/local"
 import "./globals.css";
 import ThemeProvider from "@/context/Theme";
@@ -8,6 +7,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth";
 import { ReactNode } from "react";
+import { siteMetadata, siteViewport } from "@/constants";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -22,14 +22,8 @@ const spaceGrotesk = localFont({
   weight: "300 400 500 700",
 });
 
-export const metadata: Metadata = {
-  title: "Dev Overflow",
-  description:
-    "A community-driven platform for asking and answering programming questions. Get help, share knowledge, and collaborate with developers from around the world. Explore topics in web development, mobile app development, algorithms, data structures, and more.",
-  icons: {
-    icon: "/images/site-logo.svg",
-  },
-};
+export const metadata = siteMetadata;
+export const Viewport = siteViewport;
 
 const RootLayout = async ({children,}: {children: ReactNode }) => {
   const session = await auth();
