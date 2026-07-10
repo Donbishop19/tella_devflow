@@ -23,7 +23,7 @@ const spaceGrotesk = localFont({
 });
 
 export const metadata = siteMetadata;
-export const Viewport = siteViewport;
+export const viewport = siteViewport;
 
 const RootLayout = async ({children,}: {children: ReactNode }) => {
   const session = await auth();
