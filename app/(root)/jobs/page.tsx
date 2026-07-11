@@ -9,14 +9,21 @@ import {
 
 const Page = async ({ searchParams }: RouteParams) => {
   const { query, location, page } = await searchParams;
-  const userLocation = await fetchLocation();
+  const resolvedLocation = await fetchLocation().catch(() => "us");
 
-  const jobs = await fetchJobs({
-    query: `${query}, ${location}` || `Software Engineer in ${userLocation}`,
-    page: page ?? 1,
-  });
+  const [jobsResult, countriesResult] = await Promise.allSettled([
+    fetchJobs({
+      query:
+        query && location
+          ? `${query}, ${location}`
+          : query || `Software Engineer in ${resolvedLocation}`,
+      page: page ?? 1,
+    }),
+    fetchCountries(),
+  ]);
 
-  const countries = await fetchCountries();
+  const jobs = jobsResult.status === "fulfilled" ? jobsResult.value : [];
+  const countries = countriesResult.status === "fulfilled" ? countriesResult.value : [];
   const parsedPage = parseInt(page ?? 1);
 
   // console.log(jobs);
@@ -30,7 +37,7 @@ const Page = async ({ searchParams }: RouteParams) => {
       </div>
 
       <section className="light-border mb-9 mt-11 flex flex-col gap-9 border-b pb-9">
-        {jobs?.length > 0 ? (
+        {jobs?.filter((job: Job) => job.job_title).length ? (
           jobs
             ?.filter((job: Job) => job.job_title)
             .map((job: Job) => <JobCard key={job.id} job={job} />)
