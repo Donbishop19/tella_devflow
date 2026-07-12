@@ -36,6 +36,10 @@ export async function POST(req: Request) {
       : true, data: text
      }, { status: 200 });
   } catch (error) {
-    return handleError(error, "api") as ErrorResponse;
+    const errorResponse = handleError(error, "api") as ErrorResponse;
+
+    return NextResponse.json(errorResponse, {
+      status: errorResponse.status ?? 500,
+    });
   }
 }
