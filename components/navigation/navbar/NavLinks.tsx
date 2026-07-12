@@ -10,22 +10,29 @@ import React from "react";
 
 const NavLinks = ({ isMobileNav = false, userId }: { isMobileNav?: boolean, userId?: string }) => {
   const pathname = usePathname();
+  const normalizedPathname = pathname ? pathname.replace(/\/$/, "") || "/" : "/";
 
   return (
     <>
       {sidebarLinks.map((item) => {
-        const isActive =
-          (pathname.includes(item.route) && item.route.length > 1) ||
-          pathname === item.route;
+        let linkRoute = item.route;
 
         if (item.route === "/profile") {
-          if (userId) item.route = `${item.route}/${userId}`;
-          else return null;
+          if (userId) {
+            linkRoute = `${item.route}/${userId}`;
+          } else {
+            return null;
+          }
         }
+
+        const normalizedRoute = linkRoute !== "/" ? linkRoute.replace(/\/$/, "") || "/" : "/";
+        const isActive =
+          normalizedPathname === normalizedRoute ||
+          normalizedPathname.startsWith(`${normalizedRoute}/`);
 
         const LinkComponent = (
           <Link
-            href={item.route}
+            href={linkRoute}
             key={item.label}
             className={cn(
               isActive
@@ -53,11 +60,11 @@ const NavLinks = ({ isMobileNav = false, userId }: { isMobileNav?: boolean, user
         );
 
         return isMobileNav ? (
-          <SheetClose asChild key={item.route}>
+          <SheetClose asChild key={linkRoute}>
             {LinkComponent}
           </SheetClose>
         ) : (
-          <React.Fragment key={item.route}>{LinkComponent}</React.Fragment>
+          <React.Fragment key={linkRoute}>{LinkComponent}</React.Fragment>
         );
       })}
     </>

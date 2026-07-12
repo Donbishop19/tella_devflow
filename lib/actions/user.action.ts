@@ -309,9 +309,16 @@ export async function updateUser(
   }
 
   const { user } = validationResult.session!;
+  const { params: validatedParams } = validationResult;
 
   try {
-    const updatedUser = await User.findByIdAndUpdate(user?.id, params, {
+    const sanitizedParams = { ...(validatedParams ?? {}) } as Record<string, unknown>;
+
+    if ("password" in sanitizedParams) {
+      delete sanitizedParams.password;
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(user?.id, sanitizedParams, {
       new: true,
     });
 

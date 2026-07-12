@@ -136,7 +136,7 @@ interface GlobalSearchParams {
 interface UpdateUserParams {
   name?: string;
   username?: string;
-  email?: string;
-  image?: string;
-  password?: string;
-}
+  portfolio?: string;
+  location?: string;
+  bio?: string;
+  image?: string;}
