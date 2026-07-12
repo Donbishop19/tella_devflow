@@ -21,7 +21,7 @@ export const fetchCountries = async () => {
   }
 };
 
-export const fetchJobs = async (filters: JobFilterParams) => {
+export const fetchJobs = async (filters: JobFilterParams): Promise<Job[]> => {
   const { query, page } = filters;
 
   const params = new URLSearchParams({ query, page, num_pages: "1" });
@@ -41,6 +41,7 @@ export const fetchJobs = async (filters: JobFilterParams) => {
   }
 
   const result = await response.json();
+  const data = Array.isArray(result?.data) ? result.data : [];
 
-  return result.data;
+  return data as Job[];
 };

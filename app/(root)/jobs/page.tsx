@@ -22,8 +22,14 @@ const Page = async ({ searchParams }: RouteParams) => {
     fetchCountries(),
   ]);
 
-  const jobs = jobsResult.status === "fulfilled" ? jobsResult.value : [];
-  const countries = countriesResult.status === "fulfilled" ? countriesResult.value : [];
+  const jobs =
+    jobsResult.status === "fulfilled" && Array.isArray(jobsResult.value)
+      ? jobsResult.value
+      : [];
+  const countries =
+    countriesResult.status === "fulfilled" && Array.isArray(countriesResult.value)
+      ? countriesResult.value
+      : [];
   const parsedPage = parseInt(page ?? 1);
 
   // console.log(jobs);

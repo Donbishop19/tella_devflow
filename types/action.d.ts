@@ -127,3 +127,8 @@ interface JobFilterParams {
   page: string;
   country?: string;
 }
+
+interface GlobalSearchParams {
+  query: string;
+  type: string | null;
+}
