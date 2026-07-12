@@ -4,7 +4,7 @@ import Theme from "./Theme"
 import MobileNavigation from "./MobileNavigation"
 import { auth } from "@/auth"
 import UserAvatar from "@/components/UserAvatar";
-import GlobalFilter from "@/components/filters/GlobalFilter"
+import GlobalSearch from "@/components/search/GlobalSearch"
 
 const Navbar = async () => {
   const session = await auth();
@@ -23,7 +23,7 @@ const Navbar = async () => {
         </p>
       </Link>
 
-      <GlobalFilter />
+      <GlobalSearch />
 
       <div className="flex-between gap-5">
         <Theme />

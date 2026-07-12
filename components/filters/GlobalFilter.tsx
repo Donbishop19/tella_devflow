@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { GlobalSearchFilters } from "@/constants/filters";
 import { formUrlQuery } from "@/lib/url";
@@ -14,6 +14,10 @@ const GlobalFilter = () => {
 
   const [active, setActive] = useState(typeParams || "");
 
+  useEffect(() => {
+    setActive(typeParams || "");
+  }, [typeParams]);
+  
   const handleTypeClick = (item: string) => {
     let newUrl = "";
 
@@ -25,8 +29,6 @@ const GlobalFilter = () => {
         key: "type",
         value: null,
       });
-
-      router.push(newUrl, { scroll: false });
     } else {
       setActive(item);
 
@@ -39,7 +41,7 @@ const GlobalFilter = () => {
 
     router.push(newUrl, { scroll: false });
   };
-
+  
   return (
     <div className="flex items-center gap-5 px-5">
       <p className="text-dark400_light900 body-medium">Type:</p>

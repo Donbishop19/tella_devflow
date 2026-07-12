@@ -19,9 +19,12 @@ export async function globalSearch(params: GlobalSearchParams) {
       return handleError(validationResult) as ErrorResponse;
     }
 
-    const { query, type } = params;
-    const regexQuery = { $regex: query, $options: "i" };
+    function escapeRegex(value: string) {
+      return value.replace(/[.*+?^${}()|[\]\\]/g,  "\\$&");
+    }
 
+    const { query, type } = params;
+    const regexQuery = { $regex: escapeRegex(query), $options: "i" };
     let results = [];
 
     const modelsAndTypes = [

@@ -30,9 +30,7 @@ const GlobalResult = () => {
           type,
         });
 
-        console.log(res);
-
-        setResult(res.data);
+        setResult(res.success ? res.data : []);
       } catch (error) {
         console.log(error);
         setResult([]);
@@ -40,7 +38,6 @@ const GlobalResult = () => {
         setLoading(false);
       }
     };
-
     if (global) {
       fetchResult();
     }
