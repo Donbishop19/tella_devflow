@@ -4,7 +4,7 @@ import { QueryFilter, PipelineStage, Types } from "mongoose";
 import { Answer, Question, User } from "@/database";
 import action from "../handlers/action";
 import handleError from "../handlers/error";
-import { GetUserQuestionsSchema, GetUsersAnswersSchema, GetUserSchema, GetUserTagsSchema, PaginatedSearchParamsSchema } from "../validations";
+import { GetUserQuestionsSchema, GetUsersAnswersSchema, GetUserSchema, GetUserTagsSchema, PaginatedSearchParamsSchema, UpdateUserSchema } from "../validations";
 import { assignBadges } from "../utils";
 
 export async function getUser(params: PaginatedSearchParams): Promise<ActionResponse<{users: User[], isNext: boolean}>> {
@@ -290,6 +290,35 @@ export async function getUserStats(params: GetUserParams): Promise<ActionRespons
         badges,
       }
     }    
+  } catch (error) {
+    return handleError(error) as ErrorResponse;
+  }
+}
+
+export async function updateUser(
+  params: UpdateUserParams
+): Promise<ActionResponse<{ user: User }>> {
+  const validationResult = await action({
+    params,
+    schema: UpdateUserSchema,
+    authorize: true,
+  });
+
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
+
+  const { user } = validationResult.session!;
+
+  try {
+    const updatedUser = await User.findByIdAndUpdate(user?.id, params, {
+      new: true,
+    });
+
+    return {
+      success: true,
+      data: { user: JSON.parse(JSON.stringify(updatedUser)) },
+    };
   } catch (error) {
     return handleError(error) as ErrorResponse;
   }
