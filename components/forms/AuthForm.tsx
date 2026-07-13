@@ -26,28 +26,28 @@ import ROUTES from "@/constants/routes";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
-interface AuthFormProps<T extends FieldValues> {
-  schema: StandardSchemaV1<T, T>;
-  defaultValues: T;
-  onSubmit: (data: T) => Promise<ActionResponse>;
+interface AuthFormProps<TInput extends FieldValues, TOutput extends FieldValues> {
+  schema: StandardSchemaV1<TInput, TOutput>;
+  defaultValues: TInput;
+  onSubmit: (data: TOutput) => Promise<ActionResponse>;
   formType: "SIGN_IN" | "SIGN_UP";
 }
 
-const AuthForm = <T extends FieldValues>({
+const AuthForm = <TInput extends FieldValues, TOutput extends FieldValues>({
   schema,
   defaultValues,
   formType,
   onSubmit,
-}: AuthFormProps<T>) => {
+}: AuthFormProps<TInput, TOutput>) => {
 
   const router = useRouter();
 
-  const form = useForm<T>({
-    resolver: standardSchemaResolver<T, unknown, T>(schema as StandardSchemaV1<T, T>),
-    defaultValues: defaultValues as DefaultValues<T>,
+  const form = useForm<TInput, unknown, TOutput>({
+    resolver: standardSchemaResolver<TInput, unknown, TOutput>(schema),
+    defaultValues: defaultValues as DefaultValues<TInput>,
   });
 
-  const handleSubmit: SubmitHandler<T> = async (data) => {
+  const handleSubmit: SubmitHandler<TOutput> = async (data) => {
     const result = (await onSubmit(data) as ActionResponse);
 
     if(result.success) {
@@ -75,8 +75,8 @@ const AuthForm = <T extends FieldValues>({
         {Object.keys(defaultValues).map((field) => (
           <FormField
             key={field}
-            control={form.control}
-            name={field as Path<T>}
+            control={form.control as never}
+            name={field as Path<TInput>}
             render={({ field }) => (
               <FormItem className="flex w-full flex-col gap-2.5">
                 <FormLabel className="paragraph-medium text-dark400_light700">

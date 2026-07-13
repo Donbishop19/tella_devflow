@@ -36,10 +36,14 @@ export async function POST(req: Request) {
       : true, data: text
      }, { status: 200 });
   } catch (error) {
-    const errorResponse = handleError(error, "api") as ErrorResponse;
+    const errorResponse = handleError(error, "api");
+
+    if (errorResponse instanceof NextResponse) {
+      return errorResponse;
+    }
 
     return NextResponse.json(errorResponse, {
-      status: errorResponse.status ?? 500,
+      status: "status" in errorResponse ? errorResponse.status ?? 500 : 500,
     });
   }
 }
