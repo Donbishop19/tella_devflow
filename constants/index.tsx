@@ -91,7 +91,7 @@ export const siteMetadata: Metadata = {
     { name: "Tella" },
     { name: "Dev Overflow Team", url: "https://devoverflow.dev/team" },
   ],
-  creator: "Adrian",
+  creator: "Tella",
   publisher: "Dev Overflow",
   formatDetection: {
     email: false,
